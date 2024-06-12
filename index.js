@@ -31,9 +31,10 @@ app.post("/tasks", async (req, res) => {
 // Read API
 app.get("/tasks", async (req, res) => {
   try {
-    let result = await Task.find({});
+    const tasks = await Task.find({});
+    const count = await Task.countDocuments({ isCompleted: false });
     res.status(200);
-    res.send(result);
+    res.json({tasks: tasks, itemCount: count});
   } catch (error) {
     console.log(error);
     res.status(500);
@@ -56,16 +57,6 @@ app.get("/tasks/revertCompletion/:id", async (req, res) => {
     console.log(error);
     res.status(500);
     res.send("Something firse went wrong!");
-  }
-});
-// Count Incomplete Tasks API
-app.get("/tasks/incomplete/count", async (req, res) => {
-  try {
-    const count = await Task.countDocuments({ isCompleted: false });
-    res.status(200).send({ count });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Something went wrong!");
   }
 });
 
