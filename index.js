@@ -2,8 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const Task = require("./models/taskModel");
-const URI =
-  "mongodb+srv://imsrish20:tEIA6x6wL1hnvNCQ@cluster0.r0q7yac.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+require('dotenv').config();  // Ensure this is at the top
+
 const app = express();
 
 app.use(express.json());
@@ -60,7 +60,7 @@ app.get("/tasks/revertCompletion/:id", async (req, res) => {
   }
 });
 
-//EditTask
+// Edit Task
 app.put("/tasks/:id", async (req, res) => {
   try {
     const filter = { _id: req.params.id };
@@ -89,12 +89,16 @@ app.delete("/tasks/:id", async (req, res) => {
   }
 });
 
+const URI = process.env.MONGODB_URI;
+console.log('MongoDB URI:', URI); // Added for debugging
+const PORT = process.env.PORT || 3030;
+
 mongoose
-  .connect(URI)
+  .connect(URI, { useNewUrlParser: true, useUnifiedTopology: true }) // Add options to avoid warnings
   .then(() => {
-    console.log("Mongo DB connected");
-    app.listen("3030", function () {
-      console.log(`App is listening`);
+    console.log("MongoDB connected");
+    app.listen(PORT, function () {
+      console.log(`App is listening on port ${PORT}`);
     });
   })
   .catch((err) => {
