@@ -19,12 +19,10 @@ app.post("/tasks", async (req, res) => {
     let title = req.body.title;
     let isCompleted = false;
     let result = await Task.create({ title: title, isCompleted: isCompleted });
-    res.status(200);
-    res.send(result);
+    res.status(200).send(result);
   } catch (error) {
     console.log(error);
-    res.status(500);
-    res.send("Something went wrong!");
+    res.status(500).send("Something went wrong!");
   }
 });
 
@@ -33,12 +31,10 @@ app.get("/tasks", async (req, res) => {
   try {
     const tasks = await Task.find({});
     const count = await Task.countDocuments({ isCompleted: false });
-    res.status(200);
-    res.json({tasks: tasks, itemCount: count});
+    res.status(200).json({ tasks: tasks, itemCount: count });
   } catch (error) {
     console.log(error);
-    res.status(500);
-    res.send("Something went wrong!");
+    res.status(500).send("Something went wrong!");
   }
 });
 
@@ -46,17 +42,13 @@ app.get("/tasks", async (req, res) => {
 app.get("/tasks/revertCompletion/:id", async (req, res) => {
   try {
     let id = req.params.id;
-    console.log(id);
     let record = await Task.findOne({ _id: id });
-    console.log(record);
     let update = { isCompleted: !record.isCompleted };
     let result = await Task.updateOne({ _id: id }, update);
-    res.status(200);
-    res.send(result);
+    res.status(200).send(result);
   } catch (error) {
     console.log(error);
-    res.status(500);
-    res.send("Something firse went wrong!");
+    res.status(500).send("Something went wrong!");
   }
 });
 
@@ -66,12 +58,10 @@ app.put("/tasks/:id", async (req, res) => {
     const filter = { _id: req.params.id };
     const update = { title: req.body.title };
     const result = await Task.findOneAndUpdate(filter, update);
-    res.status(200);
-    res.send(result);
+    res.status(200).send(result);
   } catch (error) {
     console.log(error);
-    res.status(500);
-    res.send("Something firse went wrong!");
+    res.status(500).send("Something went wrong!");
   }
 });
 
@@ -80,24 +70,21 @@ app.delete("/tasks/:id", async (req, res) => {
   try {
     let id = req.params.id;
     const result = await Task.findByIdAndDelete(id);
-    res.status(200);
-    res.send(result);
+    res.status(200).send(result);
   } catch (error) {
     console.log(error);
-    res.status(500);
-    res.send("Something firse went wrong!");
+    res.status(500).send("Something went wrong!");
   }
 });
 
 const URI = process.env.MONGODB_URI;
-console.log('MongoDB URI:', URI); // Added for debugging
 const PORT = process.env.PORT || 3030;
 
 mongoose
   .connect(URI, { useNewUrlParser: true, useUnifiedTopology: true }) // Add options to avoid warnings
   .then(() => {
     console.log("MongoDB connected");
-    app.listen(PORT, function () {
+    app.listen(PORT, "0.0.0.0", function () {
       console.log(`App is listening on port ${PORT}`);
     });
   })
